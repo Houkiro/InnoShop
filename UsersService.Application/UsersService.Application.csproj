@@ -18,9 +18,11 @@
 
   <ItemGroup>
     <Folder Include="Contracts\" />
-    <Folder Include="Interfaces\" />
     <Folder Include="Behaviors\" />
+    <Folder Include="Queries\GetUserById\" />
     <Folder Include="Services\" />
+    <Folder Include="Users\Commands\ConfirmEmail\" />
+    <Folder Include="Profiles\" />
   </ItemGroup>
 
 </Project>

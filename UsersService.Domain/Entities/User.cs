@@ -1,5 +1,4 @@
-﻿
-namespace UsersService.Domain.Entities
+﻿namespace UsersService.Domain.Entities
 {
     public class User
     {
