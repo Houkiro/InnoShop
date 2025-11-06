@@ -11,7 +11,7 @@ using UsersService.Infrastructure.Persistence;
 
 namespace UsersService.Infrastructure.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+    [DbContext(typeof(UserDbContext))]
     [Migration("20251105094218_CreateDb")]
     partial class CreateDb
     {

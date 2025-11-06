@@ -32,9 +32,4 @@
     <ProjectReference Include="..\UsersService.Domain\UsersService.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Extensions\" />
-    <Folder Include="Settings\" />
-  </ItemGroup>
-
 </Project>

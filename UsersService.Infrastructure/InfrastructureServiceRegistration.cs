@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using UsersService.Application.Interfaces;
+using UsersService.Application.Services;
 using UsersService.Infrastructure.Auth;
 using UsersService.Infrastructure.Persistence;
 using UsersService.Infrastructure.Repositories;
@@ -16,7 +17,7 @@ namespace UsersService.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
+            services.AddDbContext<UserDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IUserRepository, UserRepository>();
@@ -44,6 +45,11 @@ namespace UsersService.Infrastructure
                     ValidAudience = jwtSettings.Audience,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
                 };
+            });
+
+            services.AddHttpClient<IProductServiceClient, ProductServiceClient>(client =>
+            {
+                client.BaseAddress = new Uri(configuration["ProductService:BaseUrl"]);
             });
 
             return services;
