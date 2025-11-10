@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ProductsService.Application.Interfaces;
 using ProductsService.Infrastructure.Persistence;
+using ProductsService.Infrastructure.Repositories;
 
 namespace ProductsService.Infrastructure
 {
@@ -11,7 +13,7 @@ namespace ProductsService.Infrastructure
         {
             services.AddDbContext<ProductDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
+            services.AddScoped<IProductRepository, ProductRepository>();
             return services;
         }
     }
