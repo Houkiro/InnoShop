@@ -1,8 +1,13 @@
+using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using ProductsService.Application.Commands.CreateProduct;
 using ProductsService.Application.Interfaces;
+using ProductsService.Behaviors;
 using ProductsService.Infrastructure.Services;
+using ProductsService.Middleware;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +34,9 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+builder.Services.AddValidatorsFromAssembly(typeof(CreateProductCommand).Assembly);
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 builder.Services.AddControllers();
 
@@ -68,7 +76,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 
