@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ProductsService.Application.Contracts;
 using ProductsService.Application.Interfaces;
+using ProductsService.Application.Queries.GetProductById.Dto;
 
 namespace ProductsService.Application.Queries.GetProductById
 {
