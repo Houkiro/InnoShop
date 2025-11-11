@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProductsService.Application.Commands.CreateProduct;
 using ProductsService.Application.Commands.DeleteProduct;
 using ProductsService.Application.Commands.UpdateProduct;
-using ProductsService.Application.Queries.GetProductById;
+using ProductsService.Application.Queries.GetProductById.Dto;
 using ProductsService.Application.Queries.GetProducts;
 
 namespace ProductsService.Controllers

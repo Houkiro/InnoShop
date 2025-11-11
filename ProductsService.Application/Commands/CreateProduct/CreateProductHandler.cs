@@ -7,10 +7,12 @@ namespace ProductsService.Application.Commands.CreateProduct
     public class CreateProductHandler : IRequestHandler<CreateProductCommand, Guid>
     {
         private readonly IProductRepository _repo;
+        private readonly ICurrentUserService _currentUser;
 
-        public CreateProductHandler(IProductRepository repo)
+        public CreateProductHandler(IProductRepository repo, ICurrentUserService currentUser)
         {
             _repo = repo;
+            _currentUser = currentUser;
         }
 
         public async Task<Guid> Handle(CreateProductCommand request, CancellationToken cancellationToken)
@@ -18,7 +20,7 @@ namespace ProductsService.Application.Commands.CreateProduct
             var product = new Product
             {
                 Id = Guid.NewGuid(),
-                UserId = request.UserId,
+                UserId = _currentUser.UserId,
                 Title = request.Title,
                 Description = request.Description,
                 Price = request.Price,
