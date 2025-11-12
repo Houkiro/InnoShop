@@ -2,7 +2,7 @@
 using UsersService.Application.Interfaces;
 using UsersService.Domain.Exceptions;
 
-namespace UsersService.Application.Commands.ForgotPassword
+namespace UsersService.Application.Users.Commands.ForgotPassword
 {
     public class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordCommand, Unit>
     {

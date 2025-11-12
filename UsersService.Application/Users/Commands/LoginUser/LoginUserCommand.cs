@@ -1,6 +1,10 @@
 ﻿using MediatR;
 
-namespace UsersService.Application.Users.Commands.LoginUser
+namespace UsersService.Application.Users.Commands.LoginUserCommand
 {
-    public record LoginUserCommand(string Email, string Password) : IRequest<string>;
+    public class LoginUserCommand : IRequest<string> 
+    {
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
 }

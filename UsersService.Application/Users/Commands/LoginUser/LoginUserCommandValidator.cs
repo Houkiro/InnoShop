@@ -1,13 +1,17 @@
 ﻿using FluentValidation;
 
-namespace UsersService.Application.Users.Commands.LoginUser
+namespace UsersService.Application.Users.Commands.LoginUserCommand
 {
     public class LoginUserCommandValidator : AbstractValidator<LoginUserCommand>
     {
         public LoginUserCommandValidator()
         {
-            RuleFor(x => x.Email).NotEmpty().EmailAddress();
-            RuleFor(x => x.Password).NotEmpty();
+            RuleFor(x => x.Email)
+                .NotEmpty()
+                .EmailAddress();
+
+            RuleFor(x => x.Password)
+                .NotEmpty();
         }
     }
 }

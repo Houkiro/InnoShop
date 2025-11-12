@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using UsersService.Application.Users.Commands.LoginUser;
+using UsersService.Application.Users.Commands.LoginUserCommand;
 
 namespace UsersService.Controllers
 {

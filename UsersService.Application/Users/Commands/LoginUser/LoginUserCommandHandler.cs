@@ -1,30 +1,55 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using UsersService.Application.Interfaces;
+using UsersService.Domain.Exceptions;
 
-namespace UsersService.Application.Users.Commands.LoginUser
+namespace UsersService.Application.Users.Commands.LoginUserCommand
 {
     public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, string>
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IPasswordHasher _passwordHasher;
-        private readonly IJwtTokenGenerator _jwtTokenGenerator;
+        private readonly IUserRepository _repo;
+        private readonly IConfiguration _config;
 
-        public LoginUserCommandHandler(IUserRepository userRepository, IPasswordHasher passwordHasher, IJwtTokenGenerator jwtTokenGenerator)
+        public LoginUserCommandHandler(IUserRepository repo, IConfiguration config)
         {
-            _userRepository = userRepository;
-            _passwordHasher = passwordHasher;
-            _jwtTokenGenerator = jwtTokenGenerator;
+            _repo = repo;
+            _config = config;
         }
+
         public async Task<string> Handle(LoginUserCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetByEmailAsync(request.Email);
+            var user = await _repo.GetByEmailAsync(request.Email);
+            if (user == null)
+                throw new NotFoundException("User not found");
 
-            if (user == null || !_passwordHasher.Verify(request.Password, user.PasswordHash))
-                throw new UnauthorizedAccessException("Invalid credentials");
+            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+                throw new BadRequestException("Invalid credentials");
 
-            var token = _jwtTokenGenerator.GenerateToken(user);
+            if (!user.IsEmailConfirmed)
+                throw new BadRequestException("Email not confirmed");
 
-            return token;
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var claims = new[]
+            {
+                new Claim(Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email ?? ""),
+                new Claim(ClaimTypes.Role, user.Role ?? "User")
+            };
+
+            var token = new JwtSecurityToken(
+                issuer: _config["Jwt:Issuer"],
+                audience: null,
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(2),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

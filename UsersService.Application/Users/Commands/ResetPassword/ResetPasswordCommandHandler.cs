@@ -2,7 +2,7 @@
 using UsersService.Application.Interfaces;
 using UsersService.Domain.Exceptions;
 
-namespace UsersService.Application.Commands.ResetPassword
+namespace UsersService.Application.Users.Commands.ResetPassword
 {
     public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, Unit>
     {

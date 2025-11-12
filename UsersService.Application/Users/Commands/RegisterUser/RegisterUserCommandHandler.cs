@@ -2,7 +2,7 @@
 using UsersService.Application.Interfaces;
 using UsersService.Domain.Entities;
 
-namespace UsersService.Application.Commands.RegisterUser
+namespace UsersService.Application.Users.Commands.RegisterUser
 {
     public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, Guid>
     {

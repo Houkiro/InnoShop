@@ -1,6 +1,10 @@
+using FluentValidation;
+using MediatR;
 using Microsoft.OpenApi.Models;
 using UsersService.Application;
+using UsersService.Application.Behaviors;
 using UsersService.Application.Services;
+using UsersService.Application.Users.Commands.RegisterUser;
 using UsersService.Infrastructure;
 using UsersService.Infrastructure.Services;
 
@@ -48,6 +52,15 @@ builder.Services.AddHttpClient<ProductIntegrationService>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ProductService:BaseUrl"]);
 });
+
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(typeof(RegisterUserCommand).Assembly);
+});
+
+builder.Services.AddValidatorsFromAssembly(typeof(RegisterUserCommand).Assembly);
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
 
 var app = builder.Build();
 

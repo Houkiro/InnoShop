@@ -2,7 +2,7 @@
 using UsersService.Application.Interfaces;
 using UsersService.Domain.Exceptions;
 
-namespace UsersService.Application.Commands.ConfirmUser
+namespace UsersService.Application.Users.Commands.ConfirmUser
 {
     public class ConfirmUserCommandHandler : IRequestHandler<ConfirmUserCommand, bool>
     {

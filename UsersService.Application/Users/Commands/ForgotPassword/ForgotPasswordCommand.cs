@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace UsersService.Application.Commands.ForgotPassword
+namespace UsersService.Application.Users.Commands.ForgotPassword
 {
     public record ForgotPasswordCommand(string Email) : IRequest<Unit>;
 }

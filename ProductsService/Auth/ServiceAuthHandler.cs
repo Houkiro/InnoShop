@@ -22,14 +22,12 @@ namespace ProductsService.Auth
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            if (!Request.Headers.ContainsKey("X-Service-Auth"))
-                return Task.FromResult(AuthenticateResult.Fail("Missing service auth header"));
+            if (!Request.Headers.TryGetValue("X-Service-Auth", out var providedSecret))
+                return Task.FromResult(AuthenticateResult.Fail("Missing header"));
 
-            var provided = Request.Headers["X-Service-Auth"].ToString();
-            var expected = _config["ServiceAuth:Secret"];
-
-            if (string.IsNullOrEmpty(expected) || provided != expected)
-                return Task.FromResult(AuthenticateResult.Fail("Invalid service auth token"));
+            var expectedSecret = _config["ServiceAuth:Secret"];
+            if (expectedSecret == null || providedSecret != expectedSecret)
+                return Task.FromResult(AuthenticateResult.Fail("Invalid service secret"));
 
             var claims = new[] { new Claim(ClaimTypes.Name, "InternalService") };
             var identity = new ClaimsIdentity(claims, Scheme.Name);
