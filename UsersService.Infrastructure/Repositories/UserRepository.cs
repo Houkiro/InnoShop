@@ -29,5 +29,7 @@ namespace UsersService.Infrastructure.Repositories
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
         }
+        public async Task SaveChangesAsync()
+            => await _context.SaveChangesAsync();
     }
 }

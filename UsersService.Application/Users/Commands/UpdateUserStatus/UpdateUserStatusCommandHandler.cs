@@ -1,0 +1,38 @@
+﻿using MediatR;
+using UsersService.Application.Interfaces;
+using UsersService.Application.Services;
+using UsersService.Application.Users.Commands.UpdateUserStatus;
+using UsersService.Domain.Exceptions;
+
+namespace UsersService.Application.Users.Commands.UpdateUser
+{
+    public class UpdateUserStatusCommandHandler : IRequestHandler<UpdateUserStatusCommand, Unit>
+    {
+        private readonly IUserRepository _repo;
+        private readonly ProductIntegrationService _products;
+
+        public UpdateUserStatusCommandHandler(IUserRepository repo, ProductIntegrationService products)
+        {
+            _repo = repo;
+            _products = products;
+        }
+
+        public async Task<Unit> Handle(UpdateUserStatusCommand request, CancellationToken cancellationToken)
+        {
+            var user = await _repo.GetByIdAsync(request.UserId);
+            if (user == null)
+                throw new NotFoundException("User not found");
+
+            user.IsActive = request.IsActive;
+            await _repo.UpdateUserAsync(user);
+            await _repo.SaveChangesAsync();
+
+            if (user.IsActive)
+                await _products.RestoreProducts(user.Id);
+            else
+                await _products.HideProducts(user.Id);
+
+            return Unit.Value;
+        }
+    }
+}

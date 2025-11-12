@@ -1,6 +1,8 @@
 using Microsoft.OpenApi.Models;
 using UsersService.Application;
+using UsersService.Application.Services;
 using UsersService.Infrastructure;
+using UsersService.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +42,11 @@ builder.Services.AddSwaggerGen(c =>
             Array.Empty<string>()
         }
     });
+});
+
+builder.Services.AddHttpClient<ProductIntegrationService>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ProductService:BaseUrl"]);
 });
 
 var app = builder.Build();
