@@ -31,5 +31,7 @@ namespace UsersService.Infrastructure.Repositories
         }
         public async Task SaveChangesAsync()
             => await _context.SaveChangesAsync();
+        public async Task<User?> GetByConfirmationTokenAsync(string token)
+            => await _context.Users.FirstOrDefaultAsync(u => u.ConfirmationToken == token);
     }
 }

@@ -9,6 +9,8 @@
         public string? Role { get; set; } = "User";
         public bool IsActive { get; set; }
         public bool IsEmailConfirmed { get; set; }
+        public string? ConfirmationToken { get; set; }
+        public DateTime? ConfirmationTokenExpires { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

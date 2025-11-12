@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using UsersService.Application.Commands.ConfirmUser;
 using UsersService.Application.Queries.GetCurrentUser;
 using UsersService.Application.Users.Commands.ActivateUser;
 using UsersService.Application.Users.Commands.CreateUser;
 using UsersService.Application.Users.Commands.DeactivateUser;
+using UsersService.Domain.Exceptions;
 
 namespace UsersService.Controllers
 {
@@ -58,6 +60,20 @@ namespace UsersService.Controllers
             await _mediator.Send(new ActivateUserCommand(userId));
 
             return NoContent();
+        }
+
+        [HttpGet("confirm")]
+        public async Task<IActionResult> Confirm([FromQuery] string token)
+        {
+            try
+            {
+                await _mediator.Send(new ConfirmUserCommand(token));
+                return Ok("Аккаунт подтверждён.");
+            }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

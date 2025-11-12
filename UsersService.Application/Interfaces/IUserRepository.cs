@@ -8,6 +8,7 @@ namespace UsersService.Application.Interfaces
         Task<User> GetByIdAsync(Guid id);
         Task AddUserAsync(User user);
         Task UpdateUserAsync(User user);
+        Task<User?> GetByConfirmationTokenAsync(string token);
         Task SaveChangesAsync();
     }
 }
