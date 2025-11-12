@@ -9,6 +9,7 @@ namespace UsersService.Application.Interfaces
         Task AddUserAsync(User user);
         Task UpdateUserAsync(User user);
         Task<User?> GetByConfirmationTokenAsync(string token);
+        Task<User?> GetByPasswordResetTokenAsync(string token);
         Task SaveChangesAsync();
     }
 }

@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using UsersService.Application.Commands.ConfirmUser;
+using UsersService.Application.Commands.ForgotPassword;
+using UsersService.Application.Commands.ResetPassword;
+using UsersService.Application.Contracts;
 using UsersService.Application.Queries.GetCurrentUser;
 using UsersService.Application.Users.Commands.ActivateUser;
 using UsersService.Application.Users.Commands.CreateUser;
@@ -74,6 +77,20 @@ namespace UsersService.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
+        {
+            await _mediator.Send(new ForgotPasswordCommand(dto.Email));
+            return Ok("Ссылка для сброса пароля отправлена на email.");
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
+        {
+            await _mediator.Send(new ResetPasswordCommand(dto.Token, dto.NewPassword));
+            return Ok("Пароль успешно изменён.");
         }
     }
 }

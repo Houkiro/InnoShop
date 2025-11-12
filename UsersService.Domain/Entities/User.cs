@@ -12,5 +12,7 @@
         public string? ConfirmationToken { get; set; }
         public DateTime? ConfirmationTokenExpires { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public string? PasswordResetToken { get; set; }
+        public DateTime? PasswordResetTokenExpires { get; set; }
     }
 }
