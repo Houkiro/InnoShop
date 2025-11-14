@@ -4,11 +4,10 @@ namespace ProductsService.Application.Interfaces
 {
     public interface IProductRepository
     {
-        Task AddAsync(Product product);
+        Task AddAsync(Product product);           
+        Task<Product?> GetByIdAsync(Guid id);    
+        IQueryable<Product> GetQueryable();             
         Task UpdateAsync(Product product);
-        Task<Product?> GetByIdAsync(Guid id);
-        IQueryable<Product> GetQueryable();
-        Task HideProductsByUserIdAsync(Guid userId);
-        Task RestoreProductsByUserIdAsync(Guid userId);
+        Task<List<Product>> GetByUserIdAsync(Guid userId);
     }
 }

@@ -4,12 +4,14 @@ namespace UsersService.Application.Interfaces
 {
     public interface IUserRepository
     {
-        Task<User> GetByEmailAsync(string email);
-        Task<User> GetByIdAsync(Guid id);
-        Task AddUserAsync(User user);
-        Task UpdateUserAsync(User user);
+        Task<User?> GetByIdAsync(Guid id);
+        Task<User?> GetByEmailAsync(string email);
+        Task<bool> EmailExistsAsync(string email);
+
         Task<User?> GetByConfirmationTokenAsync(string token);
-        Task<User?> GetByPasswordResetTokenAsync(string token);
-        Task SaveChangesAsync();
+        Task<User?> GetByResetPasswordTokenAsync(string token);
+
+        Task AddAsync(User user);
+        Task UpdateAsync(User user);
     }
 }

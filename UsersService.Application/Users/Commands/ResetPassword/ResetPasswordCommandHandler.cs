@@ -7,15 +7,17 @@ namespace UsersService.Application.Users.Commands.ResetPassword
     public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, Unit>
     {
         private readonly IUserRepository _repo;
+        private readonly IUnitOfWork _uow;
 
-        public ResetPasswordCommandHandler(IUserRepository repo)
+        public ResetPasswordCommandHandler(IUserRepository repo, IUnitOfWork uow)
         {
             _repo = repo;
+            _uow = uow;
         }
 
         public async Task<Unit> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
         {
-            var user = await _repo.GetByPasswordResetTokenAsync(request.Token);
+            var user = await _repo.GetByResetPasswordTokenAsync(request.Token);
             if (user == null || user.PasswordResetTokenExpires < DateTime.UtcNow)
                 throw new BadRequestException("Ссылка недействительна или просрочена.");
 
@@ -23,8 +25,8 @@ namespace UsersService.Application.Users.Commands.ResetPassword
             user.PasswordResetToken = null;
             user.PasswordResetTokenExpires = null;
 
-            await _repo.UpdateUserAsync(user);
-            await _repo.SaveChangesAsync();
+            await _repo.UpdateAsync(user);
+            await _uow.SaveChangesAsync();
 
             return Unit.Value;
         }

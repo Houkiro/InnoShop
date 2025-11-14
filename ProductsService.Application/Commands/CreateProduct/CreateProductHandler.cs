@@ -7,11 +7,13 @@ namespace ProductsService.Application.Commands.CreateProduct
     public class CreateProductHandler : IRequestHandler<CreateProductCommand, Guid>
     {
         private readonly IProductRepository _repo;
+        private readonly IUnitOfWork _uow;
         private readonly ICurrentUserService _currentUser;
 
-        public CreateProductHandler(IProductRepository repo, ICurrentUserService currentUser)
+        public CreateProductHandler(IProductRepository repo, IUnitOfWork uow, ICurrentUserService currentUser)
         {
             _repo = repo;
+            _uow = uow;
             _currentUser = currentUser;
         }
 
@@ -29,6 +31,8 @@ namespace ProductsService.Application.Commands.CreateProduct
             };
 
             await _repo.AddAsync(product);
+            await _uow.SaveChangesAsync();
+
             return product.Id;
         }
     }

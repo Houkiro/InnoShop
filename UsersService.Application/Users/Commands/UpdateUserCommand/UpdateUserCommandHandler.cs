@@ -7,10 +7,12 @@ namespace UsersService.Application.Users.Commands.UpdateUserCommand
     public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand>
     {
         private readonly IUserRepository _repo;
+        private readonly IUnitOfWork _uow;
 
-        public UpdateUserCommandHandler(IUserRepository repo)
+        public UpdateUserCommandHandler(IUserRepository repo, IUnitOfWork uow)
         {
             _repo = repo;
+            _uow = uow;
         }
 
         public async Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
@@ -25,8 +27,8 @@ namespace UsersService.Application.Users.Commands.UpdateUserCommand
             if (!string.IsNullOrWhiteSpace(request.Name))
                 user.Name = request.Name;
 
-            await _repo.UpdateUserAsync(user);
-            await _repo.SaveChangesAsync();
+            await _repo.UpdateAsync(user);
+            await _uow.SaveChangesAsync();
         }
     }
 }

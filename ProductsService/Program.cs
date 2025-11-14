@@ -1,31 +1,20 @@
-using FluentValidation;
-using MediatR;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using ProductsService.Application.Commands.CreateProduct;
-using ProductsService.Application.Interfaces;
-using ProductsService.Auth;
-using ProductsService.Behaviors;
-using ProductsService.Infrastructure.Persistence;
-using ProductsService.Infrastructure.Repositories;
-using ProductsService.Infrastructure.Services;
+using ProductsService.Application;
+using ProductsService.Infrastructure;
+using ProductsService.Infrastructure.Auth;
 using ProductsService.Middleware;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var jwtKey = builder.Configuration["Jwt:Key"];
-var jwtIssuer = builder.Configuration["Jwt:Issuer"];
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
 
 builder.Services
-    .AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
@@ -33,34 +22,15 @@ builder.Services
             ValidateAudience = false,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtIssuer,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+            ValidIssuer = jwtSettings.Issuer,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
         };
-    })
-    .AddScheme<AuthenticationSchemeOptions, ServiceAuthHandler>("Service", null);
+    });
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddMediatR(cfg =>
-{
-    cfg.RegisterServicesFromAssembly(typeof(CreateProductCommand).Assembly);
-});
-
-builder.Services.AddValidatorsFromAssembly(typeof(CreateProductCommand).Assembly);
-builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-
-
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-//builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddDbContext<ProductDbContext>();
-
-builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-builder.Services.AddHttpContextAccessor();
-
-builder.Services.AddHttpClient<ProductIntegrationService>(client =>
-{
-    client.BaseAddress = new Uri(builder.Configuration["ProductService:BaseUrl"] ?? "https://localhost:7240");
-});
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -105,13 +75,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseMiddleware<ErrorHandlingMiddleware>();
-
 app.UseAuthentication();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

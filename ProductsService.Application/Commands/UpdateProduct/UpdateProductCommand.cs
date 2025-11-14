@@ -7,7 +7,6 @@ namespace ProductsService.Application.Commands.UpdateProduct
         string Title,
         string Description,
         decimal Price,
-        bool IsAvailable,
-        Guid UserId
+        bool IsAvailable
     ) : IRequest;
 }

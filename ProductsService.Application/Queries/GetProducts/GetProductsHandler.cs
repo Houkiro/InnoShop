@@ -40,7 +40,7 @@ namespace ProductsService.Application.Queries.GetProducts
                 "price" => request.Desc ? query.OrderByDescending(p => p.Price) : query.OrderBy(p => p.Price),
                 "createdat" => request.Desc ? query.OrderByDescending(p => p.CreatedAt) : query.OrderBy(p => p.CreatedAt),
                 "title" => request.Desc ? query.OrderByDescending(p => p.Title) : query.OrderBy(p => p.Title),
-                _ => query.OrderBy(p => p.Id) 
+                _ => query.OrderBy(p => p.Id)
             };
 
             query = query

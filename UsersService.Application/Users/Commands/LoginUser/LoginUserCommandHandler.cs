@@ -12,19 +12,19 @@ namespace UsersService.Application.Users.Commands.LoginUserCommand
     public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, string>
     {
         private readonly IUserRepository _repo;
-        private readonly IConfiguration _config;
+        private readonly IJwtSettingsProvider _jwtSettings;
 
-        public LoginUserCommandHandler(IUserRepository repo, IConfiguration config)
+
+        public LoginUserCommandHandler(IUserRepository repo, IJwtSettingsProvider jwtSettings)
         {
             _repo = repo;
-            _config = config;
+            _jwtSettings = jwtSettings;
         }
 
         public async Task<string> Handle(LoginUserCommand request, CancellationToken cancellationToken)
         {
-            var user = await _repo.GetByEmailAsync(request.Email);
-            if (user == null)
-                throw new NotFoundException("User not found");
+            var user = await _repo.GetByEmailAsync(request.Email)
+                ?? throw new NotFoundException("User not found");
 
             if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
                 throw new BadRequestException("Invalid credentials");
@@ -32,20 +32,21 @@ namespace UsersService.Application.Users.Commands.LoginUserCommand
             if (!user.IsEmailConfirmed)
                 throw new BadRequestException("Email not confirmed");
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
             var claims = new[]
             {
-                new Claim(Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email ?? ""),
-                new Claim(ClaimTypes.Role, user.Role ?? "User")
-            };
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new Claim(ClaimTypes.Email, user.Email ?? ""),
+            new Claim(ClaimTypes.Role, user.Role ?? "User")
+        };
 
             var token = new JwtSecurityToken(
-                issuer: _config["Jwt:Issuer"],
-                audience: null,
+                issuer: _jwtSettings.Issuer,
+                audience: _jwtSettings.Audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(2),
+                expires: DateTime.UtcNow.AddMinutes(_jwtSettings.ExpirationMinutes),
                 signingCredentials: creds
             );
 

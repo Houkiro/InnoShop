@@ -11,8 +11,11 @@ using UsersService.Infrastructure.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplication();
+
 builder.Services.AddInfrastructure(builder.Configuration);
+
 builder.Services.AddControllers();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -53,18 +56,8 @@ builder.Services.AddHttpClient<ProductIntegrationService>(client =>
     client.BaseAddress = new Uri(builder.Configuration["ProductService:BaseUrl"]);
 });
 
-builder.Services.AddMediatR(cfg =>
-{
-    cfg.RegisterServicesFromAssembly(typeof(RegisterUserCommand).Assembly);
-});
-
-builder.Services.AddValidatorsFromAssembly(typeof(RegisterUserCommand).Assembly);
-builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

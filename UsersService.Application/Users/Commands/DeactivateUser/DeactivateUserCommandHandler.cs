@@ -6,11 +6,16 @@ namespace UsersService.Application.Users.Commands.DeactivateUser
     public class DeactivateUserCommandHandler : IRequestHandler<DeactivateUserCommand>
     {
         private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IProductServiceClient _productService;
 
-        public DeactivateUserCommandHandler(IUserRepository userRepository, IProductServiceClient productService)
+        public DeactivateUserCommandHandler(
+            IUserRepository userRepository,
+            IUnitOfWork unitOfWork,
+            IProductServiceClient productService)
         {
             _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
             _productService = productService;
         }
 
@@ -22,9 +27,18 @@ namespace UsersService.Application.Users.Commands.DeactivateUser
 
             user.IsActive = false;
 
-            await _userRepository.UpdateUserAsync(user);
+            _userRepository.UpdateAsync(user);
 
-            await _productService.HideProductsByUserIdAsync(user.Id);
+            await _unitOfWork.SaveChangesAsync();
+
+            try
+            {
+                await _productService.HideProductsByUserIdAsync(user.Id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error hiding products: {ex.Message}");
+            }
         }
     }
 }

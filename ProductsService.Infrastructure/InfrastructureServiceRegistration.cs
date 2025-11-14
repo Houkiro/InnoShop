@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ProductsService.Application.Interfaces;
 using ProductsService.Infrastructure.Persistence;
 using ProductsService.Infrastructure.Repositories;
+using ProductsService.Infrastructure.Services;
 
 namespace ProductsService.Infrastructure
 {
@@ -12,8 +13,20 @@ namespace ProductsService.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<ProductDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
             services.AddScoped<IProductRepository, ProductRepository>();
+
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+            services.AddHttpContextAccessor();
+
+            services.AddHttpClient<ProductIntegrationService>(client =>
+            {
+                client.BaseAddress = new Uri(configuration["ProductService:BaseUrl"] ?? "https://localhost:7240");
+            });
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             return services;
         }
     }

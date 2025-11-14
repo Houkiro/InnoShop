@@ -6,7 +6,6 @@ namespace ProductsService.Application.Commands.CreateProduct
         string Title,
         string Description,
         decimal Price,
-        bool IsAvailable,
-        Guid UserId
+        bool IsAvailable
    ) : IRequest<Guid>;
 }

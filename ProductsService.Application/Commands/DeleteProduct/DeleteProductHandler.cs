@@ -6,10 +6,12 @@ namespace ProductsService.Application.Commands.DeleteProduct
     public class DeleteProductHandler : IRequestHandler<DeleteProductCommand>
     {
         private readonly IProductRepository _repo;
+        private readonly IUnitOfWork _uow;
 
-        public DeleteProductHandler(IProductRepository repo)
+        public DeleteProductHandler(IProductRepository repo, IUnitOfWork uow)
         {
             _repo = repo;
+            _uow = uow;
         }
 
         public async Task Handle(DeleteProductCommand request, CancellationToken cancellationToken)
@@ -23,7 +25,9 @@ namespace ProductsService.Application.Commands.DeleteProduct
                 throw new UnauthorizedAccessException("You do not own this product");
 
             product.IsDeleted = true;
+
             await _repo.UpdateAsync(product);
+            await _uow.SaveChangesAsync();
         }
     }
 }

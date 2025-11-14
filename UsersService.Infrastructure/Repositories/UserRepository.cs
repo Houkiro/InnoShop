@@ -7,33 +7,38 @@ namespace UsersService.Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly UserDbContext _context;
-        public UserRepository(UserDbContext context)
+        private readonly UserDbContext _db;
+
+        public UserRepository(UserDbContext db)
         {
-            _context = context;
+            _db = db;
         }
 
-        public async Task AddUserAsync(User user)
+        public Task<User?> GetByIdAsync(Guid id) =>
+            _db.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+        public Task<User?> GetByEmailAsync(string email) =>
+            _db.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+        public Task<bool> EmailExistsAsync(string email) =>
+            _db.Users.AnyAsync(u => u.Email == email);
+
+        public Task<User?> GetByConfirmationTokenAsync(string token) =>
+            _db.Users.FirstOrDefaultAsync(u => u.ConfirmationToken == token);
+
+        public Task<User?> GetByResetPasswordTokenAsync(string token) =>
+            _db.Users.FirstOrDefaultAsync(u => u.PasswordResetToken == token);
+
+        public Task AddAsync(User user)
         {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            _db.Users.Add(user);
+            return Task.CompletedTask;
         }
 
-        public async Task<User> GetByEmailAsync(string email) =>
-            await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-
-        public async Task<User> GetByIdAsync(Guid id) =>
-            await _context.Users.FindAsync(id);
-        public async Task UpdateUserAsync(User user)
+        public Task UpdateAsync(User user)
         {
-            _context.Users.Update(user);
-            await _context.SaveChangesAsync();
+            _db.Users.Update(user);
+            return Task.CompletedTask;
         }
-        public async Task SaveChangesAsync()
-            => await _context.SaveChangesAsync();
-        public async Task<User?> GetByConfirmationTokenAsync(string token)
-            => await _context.Users.FirstOrDefaultAsync(u => u.ConfirmationToken == token);
-        public async Task<User?> GetByPasswordResetTokenAsync(string token)
-            => await _context.Users.FirstOrDefaultAsync(u => u.PasswordResetToken == token);
     }
 }

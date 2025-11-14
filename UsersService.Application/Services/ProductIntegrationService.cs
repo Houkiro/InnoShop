@@ -6,29 +6,32 @@ namespace UsersService.Application.Services
     public class ProductIntegrationService : IProductIntegrationService
     {
         private readonly HttpClient _http;
-        private readonly IConfiguration _config;
+        private readonly string _secret;
 
         public ProductIntegrationService(HttpClient http, IConfiguration config)
         {
             _http = http;
-            _config = config;
+            _secret = config["ServiceAuth:Secret"]
+                ?? throw new Exception("ServiceAuth:Secret not configured");
+        }
+
+        private void AddAuthHeader()
+        {
+            if (!_http.DefaultRequestHeaders.Contains("X-Service-Auth"))
+                _http.DefaultRequestHeaders.Add("X-Service-Auth", _secret);
         }
 
         public async Task HideProducts(Guid userId)
         {
-            var secret = _config["ServiceAuth:Secret"];
-            _http.DefaultRequestHeaders.Add("X-Service-Auth", secret);
-
-            var response = await _http.PostAsync($"/internal/hide-products/{userId}", null);
+            AddAuthHeader();
+            var response = await _http.PostAsync($"internal/hide-products/{userId}", null);
             response.EnsureSuccessStatusCode();
         }
 
         public async Task RestoreProducts(Guid userId)
         {
-            var secret = _config["ServiceAuth:Secret"];
-            _http.DefaultRequestHeaders.Add("X-Service-Auth", secret);
-
-            var response = await _http.PostAsync($"/internal/restore-products/{userId}", null);
+            AddAuthHeader();
+            var response = await _http.PostAsync($"internal/restore-products/{userId}", null);
             response.EnsureSuccessStatusCode();
         }
     }

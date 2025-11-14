@@ -24,9 +24,7 @@ namespace ProductsService.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateProductCommand command)
         {
-            var userId = Guid.Parse(User.FindFirst("id")!.Value);
-            var id = await _mediator.Send(command with { UserId = userId });
-
+            var id = await _mediator.Send(command);
             return CreatedAtAction(nameof(GetById), new { id }, null);
         }
 
@@ -41,9 +39,7 @@ namespace ProductsService.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, UpdateProductCommand command)
         {
-            var userId = Guid.Parse(User.FindFirst("id")!.Value);
-            await _mediator.Send(command with { ProductId = id, UserId = userId });
-
+            await _mediator.Send(command with { ProductId = id });
             return NoContent();
         }
 

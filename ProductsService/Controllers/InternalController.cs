@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ProductsService.Application.Interfaces;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using ProductsService.Application.Commands.HideProductsByUser;
+using ProductsService.Application.Commands.RestoreProductsByUser;
 
 namespace ProductsService.Controllers
 {
@@ -7,26 +9,24 @@ namespace ProductsService.Controllers
     [Route("api/products")]
     public class InternalController : ControllerBase
     {
-        private readonly IProductRepository _productRepository;
+        private readonly IMediator _mediator;
 
-        public InternalController(IProductRepository productRepository)
+        public InternalController(IMediator mediator)
         {
-            _productRepository = productRepository;
+            _mediator = mediator;
         }
 
         [HttpPost("hide-by-user/{userId}")]
         public async Task<IActionResult> HideProducts(Guid userId)
         {
-            await _productRepository.HideProductsByUserIdAsync(userId);
-
+            await _mediator.Send(new HideProductsByUserCommand(userId));
             return NoContent();
         }
 
         [HttpPost("restore-by-user/{userId}")]
         public async Task<IActionResult> RestoreProducts(Guid userId)
         {
-            await _productRepository.RestoreProductsByUserIdAsync(userId);
-
+            await _mediator.Send(new RestoreProductsByUserCommand(userId));
             return NoContent();
         }
     }

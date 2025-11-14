@@ -8,11 +8,13 @@ namespace UsersService.Application.Users.Commands.ForgotPassword
     {
         private readonly IUserRepository _repo;
         private readonly IEmailService _emailService;
+        private readonly IUnitOfWork _uow;
 
-        public ForgotPasswordCommandHandler(IUserRepository repo, IEmailService emailService)
+        public ForgotPasswordCommandHandler(IUserRepository repo, IEmailService emailService, IUnitOfWork uow)
         {
             _repo = repo;
             _emailService = emailService;
+            _uow = uow;
         }
 
         public async Task<Unit> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
@@ -24,8 +26,8 @@ namespace UsersService.Application.Users.Commands.ForgotPassword
             user.PasswordResetToken = Guid.NewGuid().ToString();
             user.PasswordResetTokenExpires = DateTime.UtcNow.AddHours(1);
 
-            await _repo.UpdateUserAsync(user);
-            await _repo.SaveChangesAsync();
+            await _repo.UpdateAsync(user);
+            await _uow.SaveChangesAsync();
 
             var resetUrl = $"https://localhost:7239/api/users/reset-password?token={user.PasswordResetToken}";
             var html = $"<p>Привет {user.Name},</p><p>Чтобы сбросить пароль, перейдите по ссылке: <a href='{resetUrl}'>Сбросить пароль</a></p>";

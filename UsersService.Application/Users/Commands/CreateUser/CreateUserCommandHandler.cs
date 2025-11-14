@@ -9,11 +9,13 @@ namespace UsersService.Application.Users.Commands.CreateUser
     {
         private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher _passwordHasher;
+        private readonly IUnitOfWork _uow;
 
-        public CreateUserCommandHandler(IUserRepository userRepository, IPasswordHasher passwordHasher)
+        public CreateUserCommandHandler(IUserRepository userRepository, IPasswordHasher passwordHasher, IUnitOfWork uow)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
+            _uow = uow;
         }
 
         public async Task<Guid> Handle(CreateUserCommand request, CancellationToken cancellationToken)
@@ -25,7 +27,8 @@ namespace UsersService.Application.Users.Commands.CreateUser
                 PasswordHash = _passwordHasher.Hash(request.Password)
             };
 
-            await _userRepository.AddUserAsync(user);
+            await _userRepository.AddAsync(user);
+            await _uow.SaveChangesAsync();
             return user.Id;
         }
     }

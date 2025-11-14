@@ -2,6 +2,8 @@
 using ProductsService.Application.Interfaces;
 using ProductsService.Domain.Entities;
 using ProductsService.Infrastructure.Persistence;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ProductsService.Infrastructure.Repositories
 {
@@ -14,23 +16,14 @@ namespace ProductsService.Infrastructure.Repositories
             _context = context;
         }
 
-
         public async Task AddAsync(Product product)
         {
             await _context.Products.AddAsync(product);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateAsync(Product product)
-        {
-            _context.Products.Update(product);
-            await _context.SaveChangesAsync();
         }
 
         public async Task<Product?> GetByIdAsync(Guid id)
         {
-            return await _context.Products
-                .FirstOrDefaultAsync(p => p.Id == id);
+            return await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public IQueryable<Product> GetQueryable()
@@ -38,28 +31,16 @@ namespace ProductsService.Infrastructure.Repositories
             return _context.Products.AsQueryable();
         }
 
-        public async Task HideProductsByUserIdAsync(Guid userId)
+        public async Task UpdateAsync(Product product)
         {
-            var products = await _context.Products
-                .Where(p => p.UserId == userId)
-                .ToListAsync();
-
-            foreach (var product in products) 
-                product.IsDeleted = true;
-
-            await _context.SaveChangesAsync();
+            _context.Products.Update(product);
         }
-
-        public async Task RestoreProductsByUserIdAsync(Guid userId)
+        public async Task<List<Product>> GetByUserIdAsync(Guid userId)
         {
-            var products = await _context.Products
+            return await _context.Products
+                .IgnoreQueryFilters()
                 .Where(p => p.UserId == userId)
                 .ToListAsync();
-
-            foreach (var product in products)
-                product.IsDeleted = false;
-
-            await _context.SaveChangesAsync();
         }
     }
 }
