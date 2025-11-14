@@ -6,6 +6,7 @@ using System.Security.Claims;
 using UsersService.Application.Contracts;
 using UsersService.Application.Queries.GetCurrentUser;
 using UsersService.Application.Users.Commands.ActivateUser;
+using UsersService.Application.Users.Commands.ChangeUserRole;
 using UsersService.Application.Users.Commands.ConfirmUser;
 using UsersService.Application.Users.Commands.CreateUser;
 using UsersService.Application.Users.Commands.DeactivateUser;
@@ -13,6 +14,7 @@ using UsersService.Application.Users.Commands.ForgotPassword;
 using UsersService.Application.Users.Commands.LoginUserCommand;
 using UsersService.Application.Users.Commands.ResetPassword;
 using UsersService.Application.Users.Commands.UpdateUserCommand;
+using UsersService.Domain.Entities;
 using UsersService.Domain.Exceptions;
 
 namespace UsersService.Controllers
@@ -114,5 +116,12 @@ namespace UsersService.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = Roles.Admin)]
+        [HttpPut("change-role/{userId}")]
+        public async Task<IActionResult> ChangeUserRole(Guid userId, [FromBody] string newRole)
+        {
+            await _mediator.Send(new ChangeUserRoleCommand(userId, newRole));
+            return NoContent();
+        }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
-using ProductsService.Application.Interfaces;
 using System.Security.Claims;
+using UsersService.Application.Interfaces;
 
-namespace ProductsService.Infrastructure.Services
+namespace UsersService.Infrastructure.Services
 {
     public class CurrentUserService : ICurrentUserService
     {
@@ -24,6 +24,20 @@ namespace ProductsService.Infrastructure.Services
                     throw new UnauthorizedAccessException("Missing UserId");
 
                 return Guid.Parse(id);
+            }
+        }
+
+        public string Role
+        {
+            get
+            {
+                var role = _context.HttpContext?.User?
+                    .FindFirst(ClaimTypes.Role)?.Value;
+
+                if (string.IsNullOrEmpty(role))
+                    throw new UnauthorizedAccessException("Missing Role claim");
+
+                return role;
             }
         }
     }
