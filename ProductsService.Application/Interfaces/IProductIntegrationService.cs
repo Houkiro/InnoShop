@@ -1,4 +1,4 @@
-﻿namespace UsersService.Application.Interfaces
+﻿namespace ProductsService.Application.Interfaces
 {
     public interface IProductIntegrationService
     {

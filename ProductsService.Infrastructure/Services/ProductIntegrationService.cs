@@ -1,13 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
+using ProductsService.Application.Interfaces;
 
 namespace ProductsService.Infrastructure.Services
 {
-    public interface IProductIntegrationService
-    {
-        Task HideProducts(Guid userId);
-        Task RestoreProducts(Guid userId);
-    }
-
     public class ProductIntegrationService : IProductIntegrationService
     {
         private readonly HttpClient _http;
@@ -19,7 +14,7 @@ namespace ProductsService.Infrastructure.Services
             _config = config;
         }
 
-        public async Task HideProducts(Guid userId)
+        public async Task HideProductsAsync(Guid userId)
         {
             var secret = _config["ServiceAuth:Secret"] ?? throw new InvalidOperationException("ServiceAuth:Secret not configured");
 
@@ -30,7 +25,7 @@ namespace ProductsService.Infrastructure.Services
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task RestoreProducts(Guid userId)
+        public async Task RestoreProductsAsync(Guid userId)
         {
             var secret = _config["ServiceAuth:Secret"] ?? throw new InvalidOperationException("ServiceAuth:Secret not configured");
 

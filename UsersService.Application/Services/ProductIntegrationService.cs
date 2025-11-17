@@ -21,14 +21,14 @@ namespace UsersService.Application.Services
                 _http.DefaultRequestHeaders.Add("X-Service-Auth", _secret);
         }
 
-        public async Task HideProducts(Guid userId)
+        public async Task HideProductsAsync(Guid userId)
         {
             AddAuthHeader();
             var response = await _http.PostAsync($"internal/hide-products/{userId}", null);
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task RestoreProducts(Guid userId)
+        public async Task RestoreProductsAsync(Guid userId)
         {
             AddAuthHeader();
             var response = await _http.PostAsync($"internal/restore-products/{userId}", null);

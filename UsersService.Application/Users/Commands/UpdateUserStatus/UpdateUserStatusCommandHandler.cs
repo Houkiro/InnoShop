@@ -29,9 +29,9 @@ namespace UsersService.Application.Users.Commands.UpdateUser
             await _uow.SaveChangesAsync();
 
             if (user.IsActive)
-                await _products.RestoreProducts(user.Id);
+                await _products.RestoreProductsAsync(user.Id);
             else
-                await _products.HideProducts(user.Id);
+                await _products.HideProductsAsync(user.Id);
 
             return Unit.Value;
         }

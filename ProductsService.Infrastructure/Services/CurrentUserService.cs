@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using ProductsService.Application.Interfaces;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace ProductsService.Infrastructure.Services
@@ -18,7 +19,8 @@ namespace ProductsService.Infrastructure.Services
             get
             {
                 var id = _context.HttpContext?.User?
-                    .FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                    .FindFirst(ClaimTypes.NameIdentifier)?.Value
+                        ?? _context.HttpContext?.User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
 
                 if (id == null)
                     throw new UnauthorizedAccessException("Missing UserId");

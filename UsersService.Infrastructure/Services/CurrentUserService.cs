@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using UsersService.Application.Interfaces;
 
@@ -32,7 +33,8 @@ namespace UsersService.Infrastructure.Services
             get
             {
                 var role = _context.HttpContext?.User?
-                    .FindFirst(ClaimTypes.Role)?.Value;
+                    .FindFirst(ClaimTypes.Role)?.Value
+                        ?? _context.HttpContext?.User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
 
                 if (string.IsNullOrEmpty(role))
                     throw new UnauthorizedAccessException("Missing Role claim");
