@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -12,10 +13,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
 
-builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+builder.Services.AddAuthentication()
+    .AddScheme<AuthenticationSchemeOptions, ProductsService.Auth.ServiceAuthHandler>(
+        "Service", options => { })
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
     {
+        var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<ProductsService.Infrastructure.Auth.JwtSettings>();
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -26,6 +29,9 @@ builder.Services
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
         };
     });
+
+builder.Services.AddAuthorization();
+
 
 builder.Services.AddAuthorization();
 
@@ -74,9 +80,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
 app.UseMiddleware<ErrorHandlingMiddleware>();
+app.UseHttpsRedirection();
+
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 app.Run();

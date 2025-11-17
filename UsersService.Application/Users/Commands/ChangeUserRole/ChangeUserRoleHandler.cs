@@ -7,11 +7,13 @@ namespace UsersService.Application.Users.Commands.ChangeUserRole
     {
         private readonly IUserRepository _userRepository;
         private readonly ICurrentUserService _currentUser;
+        private readonly IUnitOfWork _uow;
 
-        public ChangeUserRoleHandler(IUserRepository userRepository, ICurrentUserService currentUser)
+        public ChangeUserRoleHandler(IUserRepository userRepository, ICurrentUserService currentUser, IUnitOfWork uow)
         {
             _userRepository = userRepository;
             _currentUser = currentUser;
+            _uow = uow;
         }
 
         public async Task Handle(ChangeUserRoleCommand request, CancellationToken cancellationToken)
@@ -23,8 +25,8 @@ namespace UsersService.Application.Users.Commands.ChangeUserRole
             if (user == null)
                 throw new KeyNotFoundException("User not found");
 
-            user.Role = request.NewRole;
             await _userRepository.UpdateAsync(user);
+            await _uow.SaveChangesAsync();
         }
     }
 }

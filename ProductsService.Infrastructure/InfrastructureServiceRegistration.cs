@@ -21,10 +21,11 @@ namespace ProductsService.Infrastructure
 
             services.AddHttpContextAccessor();
 
-            services.AddHttpClient<ProductIntegrationService>(client =>
+            services.AddHttpClient<IProductIntegrationService, ProductIntegrationService>(client =>
             {
                 client.BaseAddress = new Uri(configuration["ProductService:BaseUrl"] ?? "https://localhost:7240");
             });
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;

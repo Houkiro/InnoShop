@@ -1,13 +1,14 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProductsService.Infrastructure.Services
 {
-    public class ProductIntegrationService
+    public interface IProductIntegrationService
+    {
+        Task HideProducts(Guid userId);
+        Task RestoreProducts(Guid userId);
+    }
+
+    public class ProductIntegrationService : IProductIntegrationService
     {
         private readonly HttpClient _http;
         private readonly IConfiguration _config;
@@ -20,19 +21,23 @@ namespace ProductsService.Infrastructure.Services
 
         public async Task HideProducts(Guid userId)
         {
-            var secret = _config["ServiceAuth:Secret"];
-            _http.DefaultRequestHeaders.Add("X-Service-Auth", secret);
+            var secret = _config["ServiceAuth:Secret"] ?? throw new InvalidOperationException("ServiceAuth:Secret not configured");
 
-            var response = await _http.PostAsync($"/internal/hide-products/{userId}", null);
+            var req = new HttpRequestMessage(HttpMethod.Post, $"/api/internal/products/hide-by-user/{userId}");
+            req.Headers.Add("X-Service-Auth", secret);
+
+            var response = await _http.SendAsync(req);
             response.EnsureSuccessStatusCode();
         }
 
         public async Task RestoreProducts(Guid userId)
         {
-            var secret = _config["ServiceAuth:Secret"];
-            _http.DefaultRequestHeaders.Add("X-Service-Auth", secret);
+            var secret = _config["ServiceAuth:Secret"] ?? throw new InvalidOperationException("ServiceAuth:Secret not configured");
 
-            var response = await _http.PostAsync($"/internal/restore-products/{userId}", null);
+            var req = new HttpRequestMessage(HttpMethod.Post, $"/api/internal/products/restore-by-user/{userId}");
+            req.Headers.Add("X-Service-Auth", secret);
+
+            var response = await _http.SendAsync(req);
             response.EnsureSuccessStatusCode();
         }
     }

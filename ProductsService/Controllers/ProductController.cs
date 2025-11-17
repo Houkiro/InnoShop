@@ -6,6 +6,7 @@ using ProductsService.Application.Commands.DeleteProduct;
 using ProductsService.Application.Commands.UpdateProduct;
 using ProductsService.Application.Queries.GetProductById.Dto;
 using ProductsService.Application.Queries.GetProducts;
+using ProductsService.Extensions;
 
 namespace ProductsService.Controllers
 {
@@ -47,7 +48,7 @@ namespace ProductsService.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var userId = Guid.Parse(User.FindFirst("id")!.Value);
+            var userId = User.GetUserId(); 
             await _mediator.Send(new DeleteProductCommand(id, userId));
 
             return NoContent();

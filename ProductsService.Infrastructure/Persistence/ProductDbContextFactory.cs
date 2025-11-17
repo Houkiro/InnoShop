@@ -9,7 +9,7 @@ namespace ProductsService.Infrastructure.Persistence
         public ProductDbContext CreateDbContext(string[] args)
         {
             var config = new ConfigurationBuilder()
-                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "..", "ProductsService"))
+                .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false)
                 .Build();
 

@@ -3,7 +3,6 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using UsersService.Application.Behaviors;
-using UsersService.Application.Interfaces;
 
 namespace UsersService.Application
 {

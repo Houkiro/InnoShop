@@ -20,10 +20,10 @@ namespace ProductsService.Application.Queries.GetProducts
 
             if (!string.IsNullOrWhiteSpace(request.Search))
             {
-                var term = request.Search.ToLower();
+                var term = $"%{request.Search}%";
                 query = query.Where(p =>
-                    p.Title.ToLower().Contains(term) ||
-                    p.Description.ToLower().Contains(term));
+                    EF.Functions.Like(p.Title, term) ||
+                    EF.Functions.Like(p.Description, term));
             }
 
             if (request.MinPrice.HasValue)

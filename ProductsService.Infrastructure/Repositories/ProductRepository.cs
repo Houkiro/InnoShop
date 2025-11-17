@@ -2,6 +2,8 @@
 using ProductsService.Application.Interfaces;
 using ProductsService.Domain.Entities;
 using ProductsService.Infrastructure.Persistence;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,7 +25,7 @@ namespace ProductsService.Infrastructure.Repositories
 
         public async Task<Product?> GetByIdAsync(Guid id)
         {
-            return await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+            return await _context.Products.FindAsync(id);
         }
 
         public IQueryable<Product> GetQueryable()
@@ -31,10 +33,12 @@ namespace ProductsService.Infrastructure.Repositories
             return _context.Products.AsQueryable();
         }
 
-        public async Task UpdateAsync(Product product)
+        public Task UpdateAsync(Product product)
         {
             _context.Products.Update(product);
+            return Task.CompletedTask;
         }
+
         public async Task<List<Product>> GetByUserIdAsync(Guid userId)
         {
             return await _context.Products

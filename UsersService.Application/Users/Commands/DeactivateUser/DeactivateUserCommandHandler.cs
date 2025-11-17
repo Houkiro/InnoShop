@@ -27,7 +27,7 @@ namespace UsersService.Application.Users.Commands.DeactivateUser
 
             user.IsActive = false;
 
-            _userRepository.UpdateAsync(user);
+            await _userRepository.UpdateAsync(user);
 
             await _unitOfWork.SaveChangesAsync();
 

@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using UsersService.Application.Interfaces;
-using UsersService.Application.Services;
 using UsersService.Application.Users.Commands.UpdateUserStatus;
 using UsersService.Domain.Exceptions;
 
@@ -9,10 +8,10 @@ namespace UsersService.Application.Users.Commands.UpdateUser
     public class UpdateUserStatusCommandHandler : IRequestHandler<UpdateUserStatusCommand, Unit>
     {
         private readonly IUserRepository _repo;
-        private readonly ProductIntegrationService _products;
+        private readonly IProductIntegrationService _products;
         private readonly IUnitOfWork _uow;
 
-        public UpdateUserStatusCommandHandler(IUserRepository repo, ProductIntegrationService products, IUnitOfWork uow)
+        public UpdateUserStatusCommandHandler(IUserRepository repo, IProductIntegrationService products, IUnitOfWork uow)
         {
             _repo = repo;
             _products = products;
