@@ -25,6 +25,8 @@ namespace UsersService.Application.Users.Commands.ChangeUserRole
             if (user == null)
                 throw new KeyNotFoundException("User not found");
 
+            user.Role = request.NewRole;
+
             await _userRepository.UpdateAsync(user);
             await _uow.SaveChangesAsync();
         }
