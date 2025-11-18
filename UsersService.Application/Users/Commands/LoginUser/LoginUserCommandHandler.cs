@@ -15,7 +15,7 @@ namespace UsersService.Application.Users.Commands.LoginUserCommand
         private readonly IJwtSettingsProvider _jwtSettings;
 
 
-        public LoginUserCommandHandler(IUserRepository repo, IJwtSettingsProvider jwtSettings)
+        public LoginUserCommandHandler(IUserRepository repo, IPasswordHasher @object, IJwtSettingsProvider jwtSettings)
         {
             _repo = repo;
             _jwtSettings = jwtSettings;

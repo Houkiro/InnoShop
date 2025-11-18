@@ -7,10 +7,12 @@ using UsersService.Infrastructure.Settings;
 public class EmailService : IEmailService
 {
     private readonly EmailSettings _settings;
+    private readonly ISmtpClientWrapper _client;
 
-    public EmailService(EmailSettings settings)
+    public EmailService(EmailSettings settings, ISmtpClientWrapper client)
     {
         _settings = settings;
+        _client = client;
     }
 
     public async Task SendEmailAsync(string to, string subject, string htmlContent)
@@ -21,10 +23,9 @@ public class EmailService : IEmailService
         email.Subject = subject;
         email.Body = new TextPart("html") { Text = htmlContent };
 
-        using var client = new SmtpClient();
-        await client.ConnectAsync(_settings.SmtpServer, _settings.Port, SecureSocketOptions.StartTls);
-        await client.AuthenticateAsync(_settings.Username, _settings.Password);
-        await client.SendAsync(email);
-        await client.DisconnectAsync(true);
+        await _client.ConnectAsync(_settings.SmtpServer, _settings.Port, SecureSocketOptions.StartTls);
+        await _client.AuthenticateAsync(_settings.Username, _settings.Password);
+        await _client.SendAsync(email);
+        await _client.DisconnectAsync(true);
     }
 }

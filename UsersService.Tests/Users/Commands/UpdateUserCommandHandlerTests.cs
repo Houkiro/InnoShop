@@ -25,8 +25,10 @@ namespace UsersService.Tests.Users.Commands
 
             repoMock.Setup(r => r.GetByIdAsync(userId))
                     .ReturnsAsync(existingUser);
+
             repoMock.Setup(r => r.UpdateAsync(existingUser))
                     .Returns(Task.CompletedTask);
+
             uowMock.Setup(u => u.SaveChangesAsync())
                    .ReturnsAsync(0);
 
@@ -45,7 +47,6 @@ namespace UsersService.Tests.Users.Commands
             // Assert
             Assert.Equal("New Name", existingUser.Name);
             Assert.Equal("new@example.com", existingUser.Email);
-
             repoMock.Verify(r => r.UpdateAsync(existingUser), Times.Once);
             uowMock.Verify(u => u.SaveChangesAsync(), Times.Once);
         }
@@ -58,14 +59,17 @@ namespace UsersService.Tests.Users.Commands
             var uowMock = new Mock<IUnitOfWork>();
 
             var userId = Guid.NewGuid();
-            repoMock.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync((User?)null);
+
+            repoMock.Setup(r => r.GetByIdAsync(userId))
+                    .ReturnsAsync((User?)null);
 
             var command = new UpdateUserCommand
             {
                 UserId = userId,
-                Name = "New Name",
-                Email = "new@example.com"
+                Name = "Some Name",
+                Email = "some@example.com"
             };
+
             var handler = new UpdateUserCommandHandler(repoMock.Object, uowMock.Object);
 
             // Act & Assert
@@ -88,15 +92,20 @@ namespace UsersService.Tests.Users.Commands
             var repoMock = new Mock<IUserRepository>();
             var uowMock = new Mock<IUnitOfWork>();
 
-            repoMock.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(existingUser);
-            repoMock.Setup(r => r.UpdateAsync(existingUser)).Returns(Task.CompletedTask);
-            uowMock.Setup(u => u.SaveChangesAsync()).ReturnsAsync(0);
+            repoMock.Setup(r => r.GetByIdAsync(userId))
+                    .ReturnsAsync(existingUser);
+
+            repoMock.Setup(r => r.UpdateAsync(existingUser))
+                    .Returns(Task.CompletedTask);
+
+            uowMock.Setup(u => u.SaveChangesAsync())
+                   .ReturnsAsync(0);
 
             var command = new UpdateUserCommand
             {
                 UserId = userId,
                 Name = "New Name",
-                Email = null
+                Email = null  // Email не должен обновиться
             };
 
             var handler = new UpdateUserCommandHandler(repoMock.Object, uowMock.Object);
@@ -106,11 +115,9 @@ namespace UsersService.Tests.Users.Commands
 
             // Assert
             Assert.Equal("New Name", existingUser.Name);
-            Assert.Equal("old@example.com", existingUser.Email); 
-
+            Assert.Equal("old@example.com", existingUser.Email); // осталось старое значение
             repoMock.Verify(r => r.UpdateAsync(existingUser), Times.Once);
             uowMock.Verify(u => u.SaveChangesAsync(), Times.Once);
         }
-
     }
 }
