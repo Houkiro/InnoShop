@@ -1,0 +1,71 @@
+version: '3.9'
+
+services:
+  # -------------------------------
+  # MSSQL для UsersService
+  # -------------------------------
+  usersdb:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: usersdb
+    environment:
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    networks:
+      - innoshop-network
+
+  # -------------------------------
+  # MSSQL для ProductsService
+  # -------------------------------
+  productsdb:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: productsdb
+    environment:
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1434:1433"
+    networks:
+      - innoshop-network
+
+  # -------------------------------
+  # UsersService
+  # -------------------------------
+  usersservice:
+    build:
+      context: .
+      dockerfile: UsersService/Dockerfile
+    container_name: usersservice
+    ports:
+      - "5001:80"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=usersdb,1433;Database=UsersDb;User Id=sa;Password=YourStrong!Passw0rd;
+    depends_on:
+      - usersdb
+    networks:
+      - innoshop-network
+
+  # -------------------------------
+  # ProductsService
+  # -------------------------------
+  productsservice:
+    build:
+      context: .
+      dockerfile: ProductsService/Dockerfile
+    container_name: productsservice
+    ports:
+      - "5002:80"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=productsdb,1433;Database=ProductsDb;User Id=sa;Password=YourStrong!Passw0rd;
+    depends_on:
+      - productsdb
+    networks:
+      - innoshop-network
+
+# -------------------------------
+# Общая сеть для сервисов
+# -------------------------------
+networks:
+  innoshop-network:
+    driver: bridge
