@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 
-namespace ProductsService.Auth
+namespace UsersService.Auth
 {
     public class ServiceAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {

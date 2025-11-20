@@ -11,13 +11,11 @@ namespace ProductsService.Infrastructure.Services
     {
         private readonly IProductRepository _repo;
         private readonly IUnitOfWork _uow;
-        private readonly ILoggingService _logger;
 
-        public ProductService(IProductRepository repo, IUnitOfWork uow, ILoggingService logger)
+        public ProductService(IProductRepository repo, IUnitOfWork uow)
         {
             _repo = repo;
             _uow = uow; 
-            _logger = logger;
         }
 
         public async Task<Guid> CreateProductAsync(CreateProductCommand command, Guid userId)

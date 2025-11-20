@@ -8,7 +8,7 @@ namespace ProductsService.Controllers
 {
     [ApiController]
     [Route("api/internal/products")]
-    [Authorize(AuthenticationSchemes = "Service")] 
+    [Authorize(AuthenticationSchemes = "Service")]  
     public class InternalController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -19,6 +19,7 @@ namespace ProductsService.Controllers
         }
 
         [HttpPost("hide-by-user/{userId}")]
+        [Authorize(AuthenticationSchemes = "Service")] 
         public async Task<IActionResult> HideProducts(Guid userId)
         {
             await _mediator.Send(new HideProductsByUserCommand(userId));
@@ -26,6 +27,7 @@ namespace ProductsService.Controllers
         }
 
         [HttpPost("restore-by-user/{userId}")]
+        [Authorize(AuthenticationSchemes = "Service")]
         public async Task<IActionResult> RestoreProducts(Guid userId)
         {
             await _mediator.Send(new RestoreProductsByUserCommand(userId));

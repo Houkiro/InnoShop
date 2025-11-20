@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NLog;
 using ProductsService.Application;
 using ProductsService.Infrastructure;
 using ProductsService.Infrastructure.Auth;
@@ -10,15 +11,21 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Настройка NLog
+LogManager.Setup().LoadConfigurationFromFile("nlog.config");
+builder.Services.ConfigureLoggerService();
+
+// Настройка JWT аутентификации для внешних пользователей
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
 
 builder.Services.AddAuthentication()
+    // Кастомная схема для общения сервисов
     .AddScheme<AuthenticationSchemeOptions, ProductsService.Auth.ServiceAuthHandler>(
         "Service", options => { })
+    // JWT аутентификация для внешних пользователей
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
     {
-        var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<ProductsService.Infrastructure.Auth.JwtSettings>();
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -32,13 +39,14 @@ builder.Services.AddAuthentication()
 
 builder.Services.AddAuthorization();
 
-
-builder.Services.AddAuthorization();
-
+// Регистрация других сервисов приложения
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
+// Настройка контроллеров
 builder.Services.AddControllers();
+
+// Настройка Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -74,6 +82,7 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+// Используем Swagger в разработке
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -83,8 +92,10 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseHttpsRedirection();
 
+// Включаем аутентификацию и авторизацию
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
 app.Run();

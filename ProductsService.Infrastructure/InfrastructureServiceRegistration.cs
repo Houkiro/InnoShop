@@ -29,10 +29,9 @@ namespace ProductsService.Infrastructure
             });
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddSingleton<ILoggingService, NLogService>();
-
-
             return services;
         }
+        public static void ConfigureLoggerService(this IServiceCollection services) =>
+            services.AddSingleton<ILoggerManager, LoggerManager>();
     }
 }
