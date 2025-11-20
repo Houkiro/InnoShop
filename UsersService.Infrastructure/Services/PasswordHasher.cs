@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-using UsersService.Application.Interfaces;
+﻿using UsersService.Application.Interfaces;
 
 namespace UsersService.Infrastructure.Services
 {

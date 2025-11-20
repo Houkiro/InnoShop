@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using LoggingService;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ProductsService.Application.Interfaces;
@@ -16,6 +17,7 @@ namespace ProductsService.Infrastructure
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IProductService, ProductService>();
 
             services.AddScoped<ICurrentUserService, CurrentUserService>();
 
@@ -27,6 +29,8 @@ namespace ProductsService.Infrastructure
             });
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddSingleton<ILoggingService, NLogService>();
+
 
             return services;
         }

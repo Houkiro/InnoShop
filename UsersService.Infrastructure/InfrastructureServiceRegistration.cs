@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using LoggingService;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -66,6 +67,9 @@ namespace UsersService.Infrastructure
             });
             services.AddHttpContextAccessor();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<ISmtpClientWrapper, SmtpClientWrapper>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddSingleton<ILoggingService, NLogService>();
             return services;
         }
     }

@@ -5,15 +5,22 @@ namespace ProductsService.Infrastructure.Persistence
 {
     public class ProductDbContext : DbContext
     {
-        public ProductDbContext(DbContextOptions<ProductDbContext> options) : base(options)
-        {
-        }
+        public DbSet<Product> Products { get; set; }
 
-        public DbSet<Product> Products => Set<Product>();
+        public ProductDbContext(DbContextOptions<ProductDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Product>().HasQueryFilter(p => !p.IsDeleted);
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Product>()
+                .HasIndex(p => p.Title);
+
+            modelBuilder.Entity<Product>()
+                .HasIndex(p => p.Price);
+
+            modelBuilder.Entity<Product>()
+                .HasIndex(p => p.CreatedAt);
         }
     }
 }
