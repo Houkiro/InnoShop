@@ -10,15 +10,18 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Конфигурация JwtSettings
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
 
-builder.Services.AddAuthentication()
-    .AddScheme<AuthenticationSchemeOptions, ProductsService.Auth.ServiceAuthHandler>(
-        "Service", options => { })
+// Настройка аутентификации
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;  // Используем только JWT схему для аутентификации
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;     // Используем только JWT схему для вызова вызова
+})
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
     {
-        var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<ProductsService.Infrastructure.Auth.JwtSettings>();
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -28,17 +31,18 @@ builder.Services.AddAuthentication()
             ValidIssuer = jwtSettings.Issuer,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
         };
-    });
+    })
+    // Добавление кастомной схемы Service для сервисов
+    .AddScheme<AuthenticationSchemeOptions, ProductsService.Auth.ServiceAuthHandler>("Service", options => { });
 
-builder.Services.AddAuthorization();
-
-
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization();  // Убедитесь, что вызов один
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddControllers();
+
+// Swagger для документации
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -56,6 +60,14 @@ builder.Services.AddSwaggerGen(c =>
         Type = SecuritySchemeType.ApiKey
     });
 
+    c.AddSecurityDefinition("Service", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Введите сервисный токен в формате: X-Service-Auth {token}",
+        Name = "X-Service-Auth",
+        Type = SecuritySchemeType.ApiKey
+    });
+
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -65,6 +77,17 @@ builder.Services.AddSwaggerGen(c =>
                 {
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        },
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Service"
                 }
             },
             Array.Empty<string>()
