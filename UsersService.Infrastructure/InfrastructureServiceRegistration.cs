@@ -12,7 +12,6 @@ using UsersService.Infrastructure.Auth;
 using UsersService.Infrastructure.Persistence;
 using UsersService.Infrastructure.Repositories;
 using UsersService.Infrastructure.Services;
-using UsersService.Infrastructure.Settings;
 
 namespace UsersService.Infrastructure
 {

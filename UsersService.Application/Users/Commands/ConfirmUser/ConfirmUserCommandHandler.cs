@@ -18,10 +18,17 @@ namespace UsersService.Application.Users.Commands.ConfirmUser
         public async Task<bool> Handle(ConfirmUserCommand request, CancellationToken cancellationToken)
         {
             var user = await _repo.GetByConfirmationTokenAsync(request.Token);
-            if (user == null || user.ConfirmationTokenExpires < DateTime.UtcNow)
+            if (user == null)
+                throw new BadRequestException("Пользователь не найден или токен неверный.");
+
+            if (user.IsEmailConfirmed)
+                return true; 
+
+            if (user.ConfirmationTokenExpires == null || user.ConfirmationTokenExpires < DateTime.UtcNow)
                 throw new BadRequestException("Ссылка недействительна или просрочена.");
 
             user.IsActive = true;
+            user.IsEmailConfirmed = true;
             user.ConfirmationToken = null;
             user.ConfirmationTokenExpires = null;
 
@@ -30,5 +37,6 @@ namespace UsersService.Application.Users.Commands.ConfirmUser
 
             return true;
         }
+
     }
 }

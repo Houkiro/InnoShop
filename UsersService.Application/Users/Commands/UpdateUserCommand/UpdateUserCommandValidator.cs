@@ -6,9 +6,6 @@ namespace UsersService.Application.Users.Commands.UpdateUserCommand
     {
         public UpdateUserCommandValidator()
         {
-            RuleFor(x => x.UserId)
-                .NotEmpty();
-
             RuleFor(x => x.Email)
                 .EmailAddress()
                 .When(x => !string.IsNullOrWhiteSpace(x.Email));

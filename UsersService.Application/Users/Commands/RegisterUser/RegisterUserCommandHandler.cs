@@ -34,7 +34,9 @@ namespace UsersService.Application.Users.Commands.RegisterUser
             await _uow.SaveChangesAsync();
 
             var confirmUrl = $"https://localhost:7239/api/users/confirm?token={user.ConfirmationToken}";
-            var html = $"<p>Привет {user.Name},</p><p>Подтвердите аккаунт: <a href='{confirmUrl}'>Активировать</a></p>";
+            var html = $@"
+                <p>Привет {user.Name},</p>
+                <p>Подтвердите аккаунт: <a href='{confirmUrl}'>Активировать</a></p>";
 
             await _emailService.SendEmailAsync(user.Email, "Подтверждение аккаунта", html);
 

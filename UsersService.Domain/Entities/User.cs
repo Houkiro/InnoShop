@@ -7,8 +7,8 @@
         public string? Email { get; set; }
         public string? PasswordHash { get; set; }
         public string? Role { get; set; } = Roles.User;
-        public bool IsActive { get; set; }
-        public bool IsEmailConfirmed { get; set; }
+        public bool IsActive { get; set; } = false;
+        public bool IsEmailConfirmed { get; set; } = false;
         public string? ConfirmationToken { get; set; }
         public DateTime? ConfirmationTokenExpires { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

@@ -8,10 +8,10 @@ using UsersService.Application.Queries.GetCurrentUser;
 using UsersService.Application.Users.Commands.ActivateUser;
 using UsersService.Application.Users.Commands.ChangeUserRole;
 using UsersService.Application.Users.Commands.ConfirmUser;
-using UsersService.Application.Users.Commands.CreateUser;
 using UsersService.Application.Users.Commands.DeactivateUser;
 using UsersService.Application.Users.Commands.ForgotPassword;
 using UsersService.Application.Users.Commands.LoginUserCommand;
+using UsersService.Application.Users.Commands.RegisterUser;
 using UsersService.Application.Users.Commands.ResetPassword;
 using UsersService.Application.Users.Commands.UpdateUserCommand;
 using UsersService.Domain.Entities;
@@ -42,8 +42,8 @@ namespace UsersService.Controllers
             return Ok(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateUserCommand command)
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterUserCommand command)
         {
             var id = await _mediator.Send(command);
             return Ok(new { id });
@@ -109,9 +109,6 @@ namespace UsersService.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateUser(Guid id, UpdateUserCommand command)
         {
-            if (id != command.UserId)
-                return BadRequest("UserId mismatch");
-
             await _mediator.Send(command);
             return NoContent();
         }

@@ -8,16 +8,18 @@ namespace UsersService.Application.Users.Commands.UpdateUserCommand
     {
         private readonly IUserRepository _repo;
         private readonly IUnitOfWork _uow;
+        private readonly ICurrentUserService _currentUser;
 
-        public UpdateUserCommandHandler(IUserRepository repo, IUnitOfWork uow)
+        public UpdateUserCommandHandler(IUserRepository repo, IUnitOfWork uow, ICurrentUserService currentUser)
         {
             _repo = repo;
             _uow = uow;
+            _currentUser = currentUser;
         }
 
         public async Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
-            var user = await _repo.GetByIdAsync(request.UserId);
+            var user = await _repo.GetByIdAsync(_currentUser.UserId);
             if (user == null)
                 throw new NotFoundException("User not found");
 

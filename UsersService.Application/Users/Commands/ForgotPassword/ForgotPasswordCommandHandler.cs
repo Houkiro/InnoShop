@@ -29,8 +29,11 @@ namespace UsersService.Application.Users.Commands.ForgotPassword
             await _repo.UpdateAsync(user);
             await _uow.SaveChangesAsync();
 
-            var resetUrl = $"https://localhost:7239/api/users/reset-password?token={user.PasswordResetToken}";
-            var html = $"<p>Привет {user.Name},</p><p>Чтобы сбросить пароль, перейдите по ссылке: <a href='{resetUrl}'>Сбросить пароль</a></p>";
+            var resetUrl = $"http://localhost:5000/api/users/reset-password?token={user.PasswordResetToken}";
+            var html = $@"
+                <p>Привет {user.Name},</p>
+                <p>Чтобы сбросить пароль, перейдите по ссылке: <a href='{resetUrl}'>Сбросить пароль</a></p>";
+
             await _emailService.SendEmailAsync(user.Email!, "Сброс пароля", html);
 
             return Unit.Value;

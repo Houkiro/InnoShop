@@ -1,12 +1,7 @@
-using FluentValidation;
-using MediatR;
 using Microsoft.OpenApi.Models;
 using UsersService.Application;
-using UsersService.Application.Behaviors;
 using UsersService.Application.Services;
-using UsersService.Application.Users.Commands.RegisterUser;
 using UsersService.Infrastructure;
-using UsersService.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
