@@ -17,7 +17,8 @@ namespace ProductsService.Infrastructure.Persistence
                 .HasIndex(p => p.Title);
 
             modelBuilder.Entity<Product>()
-                .HasIndex(p => p.Price);
+                .Property(p => p.Price)
+                .HasColumnType("decimal(18,2)");
 
             modelBuilder.Entity<Product>()
                 .HasIndex(p => p.CreatedAt);

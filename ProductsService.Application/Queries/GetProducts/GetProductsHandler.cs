@@ -18,6 +18,8 @@ namespace ProductsService.Application.Queries.GetProducts
         {
             var query = _repo.GetQueryable().AsNoTracking();
 
+            query = query.Where(p => !p.IsDeleted);
+
             if (!string.IsNullOrWhiteSpace(request.Search))
             {
                 var term = $"%{request.Search}%";
