@@ -37,6 +37,5 @@ namespace UsersService.Application.Users.Commands.ConfirmUser
 
             return true;
         }
-
     }
 }

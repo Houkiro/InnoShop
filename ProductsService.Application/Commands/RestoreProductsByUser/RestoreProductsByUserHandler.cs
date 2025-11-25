@@ -18,6 +18,9 @@ namespace ProductsService.Application.Commands.RestoreProductsByUser
         {
             var products = await _repo.GetByUserIdAsync(request.UserId);
 
+            if (products == null || !products.Any())
+                return;
+
             foreach (var product in products)
                 product.IsDeleted = false;
 
