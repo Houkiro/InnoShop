@@ -26,10 +26,15 @@
     <ProjectReference Include="..\ProductsService.Domain\ProductsService.Domain.csproj" />
     <ProjectReference Include="..\ProductsService.Infrastructure\ProductsService.Infrastructure.csproj" />
     <ProjectReference Include="..\ProductsService\ProductsService.csproj" />
+    <ProjectReference Include="..\UsersService.Infrastructure\UsersService.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

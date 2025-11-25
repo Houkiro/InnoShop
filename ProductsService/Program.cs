@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProductsService.Application;
+using ProductsService.Application.Interfaces;
 using ProductsService.Infrastructure;
 using ProductsService.Infrastructure.Auth;
+using ProductsService.Infrastructure.Services;
 using ProductsService.Middleware;
 using System.Text;
 
@@ -52,6 +54,7 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1"
     });
 
+    // JWT схема
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -60,6 +63,7 @@ builder.Services.AddSwaggerGen(c =>
         Type = SecuritySchemeType.ApiKey
     });
 
+    // Service схема
     c.AddSecurityDefinition("Service", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -68,6 +72,7 @@ builder.Services.AddSwaggerGen(c =>
         Type = SecuritySchemeType.ApiKey
     });
 
+    // Требования разделены: можно использовать каждую схему отдельно
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -80,7 +85,11 @@ builder.Services.AddSwaggerGen(c =>
                 }
             },
             Array.Empty<string>()
-        },
+        }
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
         {
             new OpenApiSecurityScheme
             {
@@ -94,6 +103,7 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
 
 var app = builder.Build();
 

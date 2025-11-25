@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ProductsService.Application.Interfaces;
+using ProductsService.Infrastructure.Auth;
 using ProductsService.Infrastructure.Persistence;
 using ProductsService.Infrastructure.Repositories;
 using ProductsService.Infrastructure.Services;
@@ -23,13 +24,15 @@ namespace ProductsService.Infrastructure
 
             services.AddHttpContextAccessor();
 
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddSingleton<ILoggingService, NLogService>();
+            services.AddTransient<ServiceAuthDelegatingHandler>();
+
             services.AddHttpClient<IProductIntegrationService, ProductIntegrationService>(client =>
             {
                 client.BaseAddress = new Uri(configuration["ProductService:BaseUrl"] ?? "https://localhost:7240");
-            });
-
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddSingleton<ILoggingService, NLogService>();
+            })
+            .AddHttpMessageHandler<ServiceAuthDelegatingHandler>();
 
 
             return services;
