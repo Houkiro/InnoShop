@@ -1,0 +1,60 @@
+services:
+  usersdb:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    networks:
+      - innoshop-network
+
+  productsdb:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1434:1433"
+    networks:
+      - innoshop-network
+
+  usersservice:
+    build:
+      context: .
+      dockerfile: UsersService/Dockerfile
+    environment:
+      - DOTNET_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Server=usersdb,1433;Database=UsersDb;User Id=sa;Password=YourStrong!Passw0rd;Encrypt=False;TrustServerCertificate=True;
+    ports:
+      - "5001:8080"
+    depends_on:
+      - usersdb
+    networks:
+      - innoshop-network
+
+  productsservice:
+    build:
+      context: .
+      dockerfile: ProductsService/Dockerfile
+    environment:
+      - DOTNET_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Server=productsdb,1433;Database=ProductsDb;User Id=sa;Password=YourStrong!Passw0rd;Encrypt=False;TrustServerCertificate=True;
+    ports:
+      - "5002:8080"
+    depends_on:
+      - productsdb
+    networks:
+      - innoshop-network
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - innoshop-network
+
+networks:
+  innoshop-network:
+    driver: bridge

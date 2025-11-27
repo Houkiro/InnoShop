@@ -7,7 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="12.1.0" />
+    <PackageReference Include="MediatR" Version="13.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ProductsService.Domain\ProductsService.Domain.csproj" />
+    <ProjectReference Include="..\UsersService.Application\UsersService.Application.csproj" />
   </ItemGroup>
 
 </Project>

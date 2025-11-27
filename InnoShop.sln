@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36616.10 d17.14
+VisualStudioVersion = 17.14.36616.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsersService", "UsersService\UsersService.csproj", "{FB81B0CE-4402-44F1-B338-D10EF07003B3}"
 EndProject
@@ -23,7 +23,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductsService.Domain", "P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductsService.Infrastructure", "ProductsService.Infrastructure\ProductsService.Infrastructure.csproj", "{EEA8D398-14F3-4076-9AD5-B72085805DAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{EA993954-77A2-42EF-8CCB-CF0661111B92}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsersService.Tests", "UsersService.Tests\UsersService.Tests.csproj", "{556C461E-BBE7-4BAF-8863-18EE02728F72}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductsService.Tests", "ProductsService.Tests\ProductsService.Tests.csproj", "{F08EBDAE-846F-416A-B402-D2993A70A0EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoggingService", "LoggingService\LoggingService.csproj", "{2C9B064C-F32B-4CFE-8FC1-2C885A972634}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,10 +67,18 @@ Global
 		{EEA8D398-14F3-4076-9AD5-B72085805DAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EEA8D398-14F3-4076-9AD5-B72085805DAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EEA8D398-14F3-4076-9AD5-B72085805DAC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EA993954-77A2-42EF-8CCB-CF0661111B92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EA993954-77A2-42EF-8CCB-CF0661111B92}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EA993954-77A2-42EF-8CCB-CF0661111B92}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EA993954-77A2-42EF-8CCB-CF0661111B92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{556C461E-BBE7-4BAF-8863-18EE02728F72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{556C461E-BBE7-4BAF-8863-18EE02728F72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{556C461E-BBE7-4BAF-8863-18EE02728F72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{556C461E-BBE7-4BAF-8863-18EE02728F72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F08EBDAE-846F-416A-B402-D2993A70A0EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F08EBDAE-846F-416A-B402-D2993A70A0EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F08EBDAE-846F-416A-B402-D2993A70A0EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F08EBDAE-846F-416A-B402-D2993A70A0EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C9B064C-F32B-4CFE-8FC1-2C885A972634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C9B064C-F32B-4CFE-8FC1-2C885A972634}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C9B064C-F32B-4CFE-8FC1-2C885A972634}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C9B064C-F32B-4CFE-8FC1-2C885A972634}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
