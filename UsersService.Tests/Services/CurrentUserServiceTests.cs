@@ -34,7 +34,7 @@ namespace UsersService.Tests.Services
         [Fact]
         public void UserId_ThrowsUnauthorized_WhenClaimMissing()
         {
-            var context = CreateHttpContext(); // без NameIdentifier
+            var context = CreateHttpContext(); 
             var accessor = new Mock<IHttpContextAccessor>();
             accessor.Setup(a => a.HttpContext).Returns(context);
 

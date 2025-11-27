@@ -32,7 +32,6 @@ namespace ProductsService.Tests.Middleware
         {
             var context = CreateHttpContext();
 
-            // next delegate выбрасывает исключение
             RequestDelegate next = _ => throw ex;
 
             var middleware = new ErrorHandlingMiddleware(next, _loggerMock.Object);

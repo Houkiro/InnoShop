@@ -3,24 +3,20 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProductsService.Application;
-using ProductsService.Application.Interfaces;
 using ProductsService.Infrastructure;
 using ProductsService.Infrastructure.Auth;
-using ProductsService.Infrastructure.Services;
 using ProductsService.Middleware;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Конфигурация JwtSettings
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
 
-// Настройка аутентификации
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;  // Используем только JWT схему для аутентификации
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;     // Используем только JWT схему для вызова вызова
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
     {
@@ -34,17 +30,15 @@ builder.Services.AddAuthentication(options =>
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
         };
     })
-    // Добавление кастомной схемы Service для сервисов
     .AddScheme<AuthenticationSchemeOptions, ProductsService.Auth.ServiceAuthHandler>("Service", options => { });
 
-builder.Services.AddAuthorization();  // Убедитесь, что вызов один
+builder.Services.AddAuthorization();  
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddControllers();
 
-// Swagger для документации
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -54,7 +48,6 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1"
     });
 
-    // JWT схема
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -63,7 +56,6 @@ builder.Services.AddSwaggerGen(c =>
         Type = SecuritySchemeType.ApiKey
     });
 
-    // Service схема
     c.AddSecurityDefinition("Service", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -72,7 +64,6 @@ builder.Services.AddSwaggerGen(c =>
         Type = SecuritySchemeType.ApiKey
     });
 
-    // Требования разделены: можно использовать каждую схему отдельно
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -103,7 +94,6 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
-
 
 var app = builder.Build();
 

@@ -27,17 +27,14 @@ namespace ProductsService.Tests.Controllers
         [Fact]
         public async Task Create_ShouldSendCommand_AndReturnCreatedAtAction()
         {
-            // Arrange
             var command = new CreateProductCommand("Title", "Desc", 10, true);
             var newId = Guid.NewGuid();
             _mediatorMock
                 .Setup(m => m.Send(command, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(newId);
 
-            // Act
             var result = await _controller.Create(command);
 
-            // Assert
             var created = Assert.IsType<CreatedAtActionResult>(result);
             Assert.Equal(nameof(ProductController.GetById), created.ActionName);
             Assert.Equal(newId, created.RouteValues["id"]);
@@ -46,17 +43,14 @@ namespace ProductsService.Tests.Controllers
         [Fact]
         public async Task GetById_ShouldSendQuery_AndReturnOk()
         {
-            // Arrange
             var id = Guid.NewGuid();
             var dto = new ProductDto { Id = id, Title = "Test" };
             _mediatorMock
                 .Setup(m => m.Send(It.Is<GetProductByIdQuery>(q => q.Id == id), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(dto);
 
-            // Act
             var result = await _controller.GetById(id);
 
-            // Assert
             var ok = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(dto, ok.Value);
         }
@@ -64,17 +58,14 @@ namespace ProductsService.Tests.Controllers
         [Fact]
         public async Task Update_ShouldSendCommandWithId_AndReturnNoContent()
         {
-            // Arrange
             var id = Guid.NewGuid();
             var command = new UpdateProductCommand(id, "Title", "Desc", 10, true);
             _mediatorMock
                 .Setup(m => m.Send(It.Is<UpdateProductCommand>(c => c.ProductId == id), It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
-            // Act
             var result = await _controller.Update(id, command);
 
-            // Assert
             Assert.IsType<NoContentResult>(result);
         }
 
@@ -122,7 +113,5 @@ namespace ProductsService.Tests.Controllers
             var ok = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(products, ok.Value);
         }
-
-
     }
 }

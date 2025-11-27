@@ -21,7 +21,6 @@ namespace ProductsService.Tests.Commands
         [Fact]
         public async Task Handle_RestoresDeletedProducts_WhenCalledWithValidUserId()
         {
-            // Arrange
             var userId = Guid.NewGuid();
             var products = new List<Product>
         {
@@ -33,10 +32,8 @@ namespace ProductsService.Tests.Commands
 
             var command = new RestoreProductsByUserCommand(userId); 
 
-            // Act
             await _handler.Handle(command, CancellationToken.None);
 
-            // Assert
             _repoMock.Verify(r => r.GetByUserIdAsync(userId), Times.Once);
             Assert.All(products, product => Assert.False(product.IsDeleted));
             _uowMock.Verify(u => u.SaveChangesAsync(), Times.Once);
@@ -45,7 +42,6 @@ namespace ProductsService.Tests.Commands
         [Fact]
         public async Task Handle_DoesNotRestoreProducts_WhenNoProductsFound()
         {
-            // Arrange
             var userId = Guid.NewGuid();
             var products = new List<Product>();
 
@@ -53,10 +49,8 @@ namespace ProductsService.Tests.Commands
 
             var command = new RestoreProductsByUserCommand(userId);
 
-            // Act
             await _handler.Handle(command, CancellationToken.None);
 
-            // Assert
             _repoMock.Verify(r => r.GetByUserIdAsync(userId), Times.Once);
             Assert.Empty(products);
             _uowMock.Verify(u => u.SaveChangesAsync(), Times.Never);
@@ -65,13 +59,11 @@ namespace ProductsService.Tests.Commands
         [Fact]
         public async Task Handle_ThrowsException_WhenRepositoryFailsToFetchProducts()
         {
-            // Arrange
             var userId = Guid.NewGuid();
             _repoMock.Setup(r => r.GetByUserIdAsync(userId)).ThrowsAsync(new Exception("Repository failure"));
 
             var command = new RestoreProductsByUserCommand(userId); 
 
-            // Act & Assert
             var exception = await Assert.ThrowsAsync<Exception>(() => _handler.Handle(command, CancellationToken.None));
             Assert.Equal("Repository failure", exception.Message);
         }

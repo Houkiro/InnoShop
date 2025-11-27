@@ -9,7 +9,6 @@ namespace ProductsService.Tests.Commands
         [Fact]
         public async Task Handle_ShouldReturnGuid_WhenProductCreated()
         {
-            // Arrange
             var productServiceMock = new Mock<IProductService>();
             var currentUserMock = new Mock<ICurrentUserService>();
 
@@ -26,10 +25,8 @@ namespace ProductsService.Tests.Commands
 
             var handler = new CreateProductHandler(productServiceMock.Object, currentUserMock.Object);
 
-            // Act
             var result = await handler.Handle(command, CancellationToken.None);
 
-            // Assert
             Assert.Equal(productId, result);
             productServiceMock.Verify(s => s.CreateProductAsync(command, userId), Times.Once);
         }
@@ -37,7 +34,6 @@ namespace ProductsService.Tests.Commands
         [Fact]
         public async Task Handle_ShouldPassCorrectUserIdToService()
         {
-            // Arrange
             var productServiceMock = new Mock<IProductService>();
             var currentUserMock = new Mock<ICurrentUserService>();
 
@@ -48,10 +44,8 @@ namespace ProductsService.Tests.Commands
 
             var handler = new CreateProductHandler(productServiceMock.Object, currentUserMock.Object);
 
-            // Act
             await handler.Handle(command, CancellationToken.None);
 
-            // Assert
             productServiceMock.Verify(s => s.CreateProductAsync(command, userId), Times.Once);
         }
     }

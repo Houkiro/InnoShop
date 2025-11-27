@@ -30,7 +30,6 @@ namespace ProductsService.Tests.Commands
         [Fact]
         public async Task Handle_ShouldMarkProductsAsDeleted_AndCallSaveChanges()
         {
-            // Arrange
             var userId = Guid.NewGuid();
             var products = new List<Product>
             {
@@ -43,10 +42,8 @@ namespace ProductsService.Tests.Commands
 
             var command = new HideProductsByUserCommand(userId);
 
-            // Act
             await _handler.Handle(command, CancellationToken.None);
 
-            // Assert
             Assert.All(products, p => Assert.True(p.IsDeleted));
             _uowMock.Verify(u => u.SaveChangesAsync(), Times.Once);
 
@@ -63,17 +60,14 @@ namespace ProductsService.Tests.Commands
         [Fact]
         public async Task Handle_ShouldCallRepositoryWithCorrectUserId()
         {
-            // Arrange
             var userId = Guid.NewGuid();
             var command = new HideProductsByUserCommand(userId);
 
             _repoMock.Setup(r => r.GetByUserIdAsync(userId))
                      .ReturnsAsync(new List<Product>());
 
-            // Act
             await _handler.Handle(command, CancellationToken.None);
 
-            // Assert
             _repoMock.Verify(r => r.GetByUserIdAsync(userId), Times.Once);
         }
     }

@@ -20,7 +20,6 @@ namespace ProductsService.Tests.Commands
         [Fact]
         public async Task Handle_CallsUpdateProductAsync_WithCorrectParameters()
         {
-            // Arrange
             var userId = Guid.NewGuid();
             var productId = Guid.NewGuid();  
             var command = new UpdateProductCommand(
@@ -33,10 +32,8 @@ namespace ProductsService.Tests.Commands
 
             _currentUserServiceMock.Setup(c => c.UserId).Returns(userId); 
 
-            // Act
             await _handler.Handle(command, CancellationToken.None);
 
-            // Assert
             _productServiceMock.Verify(
                 ps => ps.UpdateProductAsync(command, userId),
                 Times.Once,
@@ -47,7 +44,6 @@ namespace ProductsService.Tests.Commands
         [Fact]
         public async Task Handle_DoesNotThrowException_WhenCalledWithValidData()
         {
-            // Arrange
             var userId = Guid.NewGuid();
             var productId = Guid.NewGuid();
             var command = new UpdateProductCommand(
@@ -60,7 +56,6 @@ namespace ProductsService.Tests.Commands
 
             _currentUserServiceMock.Setup(c => c.UserId).Returns(userId); 
 
-            // Act & Assert
             await _handler.Handle(command, CancellationToken.None); 
         }
     }

@@ -1,12 +1,6 @@
-version: '3.9'
-
 services:
-  # -------------------------------
-  # MSSQL для UsersService
-  # -------------------------------
   usersdb:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: usersdb
     environment:
       SA_PASSWORD: "YourStrong!Passw0rd"
       ACCEPT_EULA: "Y"
@@ -15,12 +9,8 @@ services:
     networks:
       - innoshop-network
 
-  # -------------------------------
-  # MSSQL для ProductsService
-  # -------------------------------
   productsdb:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: productsdb
     environment:
       SA_PASSWORD: "YourStrong!Passw0rd"
       ACCEPT_EULA: "Y"
@@ -29,43 +19,42 @@ services:
     networks:
       - innoshop-network
 
-  # -------------------------------
-  # UsersService
-  # -------------------------------
   usersservice:
     build:
       context: .
       dockerfile: UsersService/Dockerfile
-    container_name: usersservice
-    ports:
-      - "5001:80"
     environment:
-      - ConnectionStrings__DefaultConnection=Server=usersdb,1433;Database=UsersDb;User Id=sa;Password=YourStrong!Passw0rd;
+      - DOTNET_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Server=usersdb,1433;Database=UsersDb;User Id=sa;Password=YourStrong!Passw0rd;Encrypt=False;TrustServerCertificate=True;
+    ports:
+      - "5001:8080"
     depends_on:
       - usersdb
     networks:
       - innoshop-network
 
-  # -------------------------------
-  # ProductsService
-  # -------------------------------
   productsservice:
     build:
       context: .
       dockerfile: ProductsService/Dockerfile
-    container_name: productsservice
-    ports:
-      - "5002:80"
     environment:
-      - ConnectionStrings__DefaultConnection=Server=productsdb,1433;Database=ProductsDb;User Id=sa;Password=YourStrong!Passw0rd;
+      - DOTNET_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Server=productsdb,1433;Database=ProductsDb;User Id=sa;Password=YourStrong!Passw0rd;Encrypt=False;TrustServerCertificate=True;
+    ports:
+      - "5002:8080"
     depends_on:
       - productsdb
     networks:
       - innoshop-network
 
-# -------------------------------
-# Общая сеть для сервисов
-# -------------------------------
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - innoshop-network
+
 networks:
   innoshop-network:
     driver: bridge

@@ -174,7 +174,6 @@ namespace UsersService.Tests.Controllers
 
             var okResult = Assert.IsType<OkObjectResult>(result);
 
-            // Приводим к анонимному типу через pattern matching
             var value = okResult.Value;
             var tokenProp = value!.GetType().GetProperty("Token")!.GetValue(value, null);
 
